@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+       - FLASK_APP=app.py
+       - POSTGRES_USER=user
+       - POSTGRES_PASSWORD=password
+       - POSTGRES_HOST=host.docker.internal
+       - POSTGRES_PORT=5432
+       - POSTGRES_DB=mydb
+    extra_hosts:
+      -"host.docker.internal:host-gateway"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: "mydatabase"
+      POSTGRES_USER: "myuser"
+      POSTGRES_PASSWORD: "mypassword"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
