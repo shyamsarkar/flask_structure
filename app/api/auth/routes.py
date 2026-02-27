@@ -1,5 +1,10 @@
-from flask import request, jsonify
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from flask import jsonify, request
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required,
+)
 
 from app.api.auth import api_auth_bp
 from app.services.auth_service import AuthService

@@ -1,14 +1,12 @@
 import pytest
-from app import create_app
-from app.extensions import db
-import os
-import pdb
 from flask_migrate import upgrade
+
+from app import create_app
 
 
 @pytest.fixture()
 def test_app():
-    app = create_app('config.TestingConfig')
+    app = create_app("config.TestingConfig")
     with app.app_context():
         upgrade()
     yield app
@@ -26,10 +24,6 @@ def client(test_app):
 @pytest.fixture()
 def runner(test_app):
     return test_app.test_cli_runner()
-
-
-
-
 
 
 # @pytest.fixture(scope='module')

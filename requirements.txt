@@ -21,6 +21,7 @@ Flask-Caching
 # -------------------------
 marshmallow
 Flask-Marshmallow
+email-validator
 
 # -------------------------
 # Background Tasks
