@@ -1,123 +1,226 @@
 Structure
 =========
+
 ```
 myapp/
 ├── app/
-│   ├── __init__.py
+│   ├── __init__.py              # create_app(), blueprint + extensions init
+│
+│   ├── extensions/              # third-party integrations (NO app logic)
+│   │   ├── __init__.py
+│   │   ├── db.py                # SQLAlchemy()
+│   │   ├── migrate.py           # Flask-Migrate
+│   │   ├── login_manager.py     # Flask-Login (ADDED)
+│   │   ├── cache.py
+│   │   ├── limiter.py
+│   │   ├── mail.py
+│   │   └── celery.py
+│
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── post.py
-│   │   ├── user.py
-│   │   └── role.py
-│   ├── routes/
+│   │   ├── base.py              # timestamps, soft delete (kept)
+│   │   ├── user.py              # User + UserMixin
+│   │   ├── tenant.py
+│   │   └── membership.py
+│
+│   ├── services/                # business logic (NO Flask imports)
 │   │   ├── __init__.py
-│   │   ├── auth.py
-│   │   ├── post.py
-│   │   ├── user.py
-│   │   └── admin.py
+│   │   ├── auth_service.py      # login/register helpers
+│   │   ├── tenant_service.py
+│   │   └── membership_service.py
+│
+│   ├── web/                     # HTML routes (PRIMARY interface)
+│   │   ├── __init__.py
+│   │   ├── auth/
+│   │   │   ├── __init__.py
+│   │   │   └── routes.py        # login/logout/register
+│   │   └── tenants/
+│   │       ├── __init__.py
+│   │       └── routes.py
+│
+│   ├── api/                     # JSON API (OPTIONAL, parallel)
+│   │   ├── __init__.py
+│   │   ├── auth/
+│   │   │   ├── __init__.py
+│   │   │   ├── routes.py
+│   │   │   └── schemas.py
+│   │   └── tenants/
+│   │       ├── __init__.py
+│   │       ├── routes.py
+│   │       └── schemas.py
+│
 │   ├── tasks/
 │   │   ├── __init__.py
-│   │   └── send_email.py
+│   │   └── send_email.py        # Celery task (uses app context)
+│
 │   ├── templates/
-│   ├── static/
-│   └── extensions/
-│       ├── __init__.py
-│       ├── celery.py
-│       ├── db.py
-│       ├── login_manager.py
-│       ├── admin.py
-│       ├── mail.py
-│       ├── security.py
-│       ├── jwt.py
-│       └── api.py
-├── scripts/
-│   ├── db_create.py
-│   ├── db_migrate.py
-│   └── db_upgrade.py
+│   │   ├── base.html
+│   │   ├── auth/
+│   │   │   ├── login.html
+│   │   │   └── register.html
+│   │   └── tenants/
+│   │       └── dashboard.html
+│
+│   └── static/
+│       ├── css/
+│       └── js/
+│
+├── migrations/
+│   └── versions/
+│
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py
-│   ├── test_auth.py
-│   ├── test_post.py
-│   └── test_user.py
-├── migrations/
-│   └── versions/
-│       ├── <migration file 1>.py
-│       └── <migration file 2>.py
-├── config.py
+│   ├── web/                     # HTML/login tests
+│   ├── api/
+│   └── services/
+│
+├── docker/
+│   ├── Dockerfile
+│   └── docker-compose.yml
+│
 ├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── run.py
-└── .env
-
-
+├── .env.sample
+├── wsgi.py                      # gunicorn entrypoint
+├── config.py
+└── README.md
 ```
 
+Python Version
+--------------
 
-Python3 Version - 3.10.6
+```
+Python 3.10.6
+```
+If you use **asdf**, install and set the version like this:
+
+```bash
+asdf plugin add python
+asdf install python 3.10.6
+asdf local python 3.10.6
+```
+
+Verify
+-------
+```
+python --version
+```
 
 Virtual Environment (Optional)
 ------------------------------
 
-    python3 -m venv venv        #for windows replace python3 => python
-    source venv/bin/activate    #for windows write "venv/Scripts/activate"
+```bash
+python3 -m venv venv          # Windows: python -m venv venv
+source venv/bin/activate     # Windows: venv\Scripts\activate
+```
 
 Installation
 ------------
 
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-Run Application On Ubuntu Terminal
-----------------------------------
+Environment Variables
+---------------------
 
-    $ export FLASK_APP=manage.py
-    $ export FLASK_DEBUG=1  (Remember FLASK_ENV is depricated)
-    $ flask run
+Create a `.env` file:
 
-Run Application On Windows Powershell
--------------------------------------
+```env
+FLASK_ENV=development
+FLASK_DEBUG=1
+SECRET_KEY=your-secret-key
+DATABASE_URL=postgresql://user:password@localhost/dbname
+REDIS_URL=redis://localhost:6379/0
+```
 
-    -> $env:FLASK_APP="app"
-    -> $env:FLASK_DEBUG=1
-    -> flask run
+Run Application
+---------------
 
-Run Application On Windows CMD
--------------------------------
+```bash
+flask --app wsgi run
+```
 
-    -> set FLASK_APP=app
-    -> set FLASK_DEBUG=1
-    -> flask run
+Application runs at:
 
-      * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+http://127.0.0.1:5000/
+```
 
+Database Commands
+-----------------
+
+```bash
+flask db init
+flask db migrate -m "initial migration"
+flask db upgrade
+```
 
 Links
 -----
 
--   Flask: https://flask.palletsprojects.com/en/2.2.x/
--   Flask-SQLAlchemy: https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/
--   Flask-BluePrint: https://flask.palletsprojects.com/en/2.2.x/blueprints/
--   Flask-Mail: https://pythonhosted.org/Flask-Mail/
--   Flask-Script: https://flask-script.readthedocs.io/en/latest/
--   Celery: https://flask.palletsprojects.com/en/2.2.x/patterns/celery/
--   Flask-JWT-Extended: https://flask-jwt-extended.readthedocs.io/en/stable/
--   Flask-Admin: https://flask-admin.readthedocs.io/en/latest/
--   Flask-Babel: https://python-babel.github.io/flask-babel/
--   Flask-RESTful: https://flask-restful.readthedocs.io/en/latest/
--   pytest: https://flask.palletsprojects.com/en/2.2.x/testing/
--   autopep8: https://pypi.org/project/autopep8/
--   Flask-Security: https://flask-security.readthedocs.io/en/3.0.0/
--   UUID: Default
--   Fakers: https://faker.readthedocs.io/en/master/
-<!-- -   Flask-Login: https://flask-login.readthedocs.io/en/latest/ -->
-<!-- -   Flask-Paranoid: https://flask-paranoid.readthedocs.io/en/latest/ -->
-<!-- -   Flask-Uploads: https://flask-uploads.readthedocs.io/en/latest/ -->
+- Flask  
+  https://flask.palletsprojects.com/
 
+- Flask-SQLAlchemy  
+  https://flask-sqlalchemy.palletsprojects.com/
 
+- Flask Blueprints  
+  https://flask.palletsprojects.com/en/latest/blueprints/
 
+- Flask-JWT-Extended  
+  https://flask-jwt-extended.readthedocs.io/
 
-``` Installation Command ```
-1. pip install Flask Flask-SQLAlchemy Flask-Script autopep8 flask-blueprint Flask-Mail celery flask-jwt-extended Flask-Admin flask-babel pytest flask-restful psycopg2-binary Flask-Migrate Flask-Security python-dotenv
+- Flask-Mail  
+  https://pythonhosted.org/Flask-Mail/
 
- <!-- Flask-Login  Flask-Paranoid Faker-->
+- Celery (Flask pattern)  
+  https://flask.palletsprojects.com/en/latest/patterns/celery/
+
+- Flask-Admin  
+  https://flask-admin.readthedocs.io/
+
+- Flask-Babel  
+  https://python-babel.github.io/flask-babel/
+
+- pytest  
+  https://docs.pytest.org/
+
+- Faker  
+  https://faker.readthedocs.io/
+
+Installation Command
+--------------------
+
+```bash
+pip install \
+Flask \
+Flask-SQLAlchemy \
+Flask-Migrate \
+Flask-JWT-Extended \
+Flask-WTF \
+Flask-Mail \
+Flask-Caching \
+Flask-Limiter \
+Flask-Admin \
+Flask-Babel \
+celery \
+redis \
+python-dotenv \
+psycopg2-binary \
+pytest \
+faker \
+black \
+ruff \
+gunicorn
+```
+
+Notes
+-----
+
+- Flask-Script is deprecated and not used
+- Flask-RESTful is intentionally avoided
+- Routes are thin, business logic lives in services
+- API and Web layers are clearly separated
+- Redis is required for Celery and Flask-Limiter
+

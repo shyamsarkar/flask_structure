@@ -1,25 +1,59 @@
-from app.extensions import BaseModel, db, views, admin
-from .roles_users import roles_users
+# # app/models/user.py
+# from app.extensions.db import db
+# from flask_login import UserMixin
+# from .base import BaseModel
+
+# class User(UserMixin, BaseModel):
+#     __tablename__ = "users"
+
+#     email = db.Column(db.String(255), unique=True, nullable=False)
+#     password_hash = db.Column(db.String(255), nullable=False)
+
+#     first_name = db.Column(db.String(100))
+#     last_name = db.Column(db.String(100))
+
+#     is_active = db.Column(db.Boolean, default=True)
+#     last_login_at = db.Column(db.DateTime)
+
+#     memberships = db.relationship(
+#         "Membership",
+#         back_populates="user",
+#         cascade="all, delete-orphan",
+#     )
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.extensions.db import db
+from .base import BaseModel
 
 
-class User(BaseModel):
-    __tablename__ = 'users'
+class User(UserMixin, BaseModel):
+    __tablename__ = "users"
+
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    active = db.Column(db.Boolean, default=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+
+    is_active = db.Column(db.Boolean, default=True)
     last_login_at = db.Column(db.DateTime)
-    current_login_at = db.Column(db.DateTime)
-    last_login_ip = db.Column(db.String(50))
-    current_login_ip = db.Column(db.String(50))
-    login_count = db.Column(db.Integer)
-    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('user', lazy='dynamic'))
-    # posts = db.relationship('Post', backref='user', lazy=True)
-    # documents = db.relationship('Document', backref='user', lazy=True)
 
-    def __repr__(self):
-        return f"User('{self.email}')"
+    memberships = db.relationship(
+        "Membership",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
-    def to_dictionary(self):
-        return {"email":self.email, "password":self.password}
+    # --- password helpers ---
+    def set_password(self, password: str):
+        self.password_hash = generate_password_hash(password)
 
-admin.add_view(views(User, db.session))
+    def check_password(self, password: str) -> bool:
+        return check_password_hash(self.password_hash, password)
+
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}".strip()
+
+    def __repr__(self) -> str:
+        return f"<User {self.email}>"

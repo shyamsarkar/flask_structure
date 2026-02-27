@@ -1,50 +1,54 @@
-alembic==1.9.4
-amqp==5.1.1
-aniso8601==9.0.1
-attrs==22.2.0
-autopep8==2.0.1
-Babel==2.11.0
-billiard==3.6.4.0
-blinker==1.5
-celery==5.2.7
-click==8.1.3
-click-didyoumean==0.3.0
-click-plugins==1.1.1
-click-repl==0.2.0
-exceptiongroup==1.1.0
-Faker==17.3.0
-Flask==2.2.3
-Flask-Admin==1.6.1
-flask-babel==3.0.1
-flask-blueprint==1.3.0
-Flask-JWT-Extended==4.4.4
-Flask-Mail==0.9.1
-Flask-Migrate==4.0.4
-Flask-RESTful==0.3.9
-Flask-Script==2.0.6
-Flask-SQLAlchemy==3.0.3
-greenlet==2.0.2
-iniconfig==2.0.0
-itsdangerous==2.1.2
-Jinja2==3.1.2
-kombu==5.2.4
-Mako==1.2.4
-MarkupSafe==2.1.2
-packaging==23.0
-pluggy==1.0.0
-prompt-toolkit==3.0.37
-psycopg2-binary==2.9.5
-pycodestyle==2.10.0
-PyJWT==2.6.0
-pytest==7.2.1
-python-dateutil==2.8.2
-python-dotenv==0.21.1
-pytz==2022.7.1
-six==1.16.0
-SQLAlchemy==2.0.4
-tomli==2.0.1
-typing_extensions==4.5.0
-vine==5.0.0
-wcwidth==0.2.6
-Werkzeug==2.2.3
-WTForms==3.0.1
+# -------------------------
+# Core
+# -------------------------
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+python-dotenv
+gunicorn
+
+# -------------------------
+# Authentication & Security
+# -------------------------
+Flask-Login
+Flask-JWT-Extended
+Flask-WTF
+Flask-Limiter
+Flask-Caching
+
+# -------------------------
+# Serialization / Validation
+# -------------------------
+marshmallow
+Flask-Marshmallow
+
+# -------------------------
+# Background Tasks
+# -------------------------
+celery
+redis
+
+# -------------------------
+# Email & Admin
+# -------------------------
+Flask-Mail
+Flask-Admin
+Flask-Babel
+
+# -------------------------
+# Database Driver
+# -------------------------
+psycopg2-binary
+
+# -------------------------
+# Testing
+# -------------------------
+pytest
+pytest-cov
+faker
+
+# -------------------------
+# Code Quality
+# -------------------------
+# black
+ruff
