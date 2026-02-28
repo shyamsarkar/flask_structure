@@ -12,7 +12,7 @@ def index():
 
 from app.web.auth import (
     auth_bp,  # noqa: E402
-    routes,  # noqa: E402, F401
+    views,  # noqa: E402, F401
 )
 
 web_bp.register_blueprint(auth_bp)

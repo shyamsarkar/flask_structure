@@ -1,11 +1,11 @@
-Structure
+MVT Structure
 =========
 
 ```
 myapp/
 ├── app/
 │   ├── __init__.py              # create_app(), blueprint + extensions init
-│
+│   │
 │   ├── extensions/              # third-party integrations (NO app logic)
 │   │   ├── __init__.py
 │   │   ├── db.py                # SQLAlchemy()
@@ -15,44 +15,44 @@ myapp/
 │   │   ├── limiter.py
 │   │   ├── mail.py
 │   │   └── celery.py
-│
+│   │
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── base.py              # timestamps, soft delete (kept)
 │   │   ├── user.py              # User + UserMixin
 │   │   ├── tenant.py
 │   │   └── membership.py
-│
+│   │
 │   ├── services/                # business logic (NO Flask imports)
 │   │   ├── __init__.py
 │   │   ├── auth_service.py      # login/register helpers
 │   │   ├── tenant_service.py
 │   │   └── membership_service.py
-│
+│   │
 │   ├── web/                     # HTML routes (PRIMARY interface)
 │   │   ├── __init__.py
 │   │   ├── auth/
 │   │   │   ├── __init__.py
-│   │   │   └── routes.py        # login/logout/register
+│   │   │   └── views.py        # login/logout/register
 │   │   └── tenants/
 │   │       ├── __init__.py
-│   │       └── routes.py
-│
+│   │       └── views.py
+│   │
 │   ├── api/                     # JSON API (OPTIONAL, parallel)
 │   │   ├── __init__.py
 │   │   ├── auth/
 │   │   │   ├── __init__.py
-│   │   │   ├── routes.py
+│   │   │   ├── views.py
 │   │   │   └── schemas.py
 │   │   └── tenants/
 │   │       ├── __init__.py
-│   │       ├── routes.py
+│   │       ├── views.py
 │   │       └── schemas.py
-│
+│   │
 │   ├── tasks/
 │   │   ├── __init__.py
 │   │   └── send_email.py        # Celery task (uses app context)
-│
+│   │
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── auth/
@@ -60,7 +60,7 @@ myapp/
 │   │   │   └── register.html
 │   │   └── tenants/
 │   │       └── dashboard.html
-│
+│   │
 │   └── static/
 │       ├── css/
 │       └── js/
@@ -90,14 +90,14 @@ Python Version
 --------------
 
 ```
-Python 3.10.6
+Python 3.12.12
 ```
 If you use **asdf**, install and set the version like this:
 
 ```bash
 asdf plugin add python
-asdf install python 3.10.6
-asdf local python 3.10.6
+asdf install python 3.12.12
+asdf local python 3.12.12
 ```
 
 Verify
@@ -110,8 +110,8 @@ Virtual Environment (Optional)
 ------------------------------
 
 ```bash
-python3 -m venv venv          # Windows: python -m venv venv
-source venv/bin/activate     # Windows: venv\Scripts\activate
+python3 -m venv venv          # Try: python -m venv venv
+source venv/bin/activate
 ```
 
 Installation
@@ -136,9 +136,14 @@ REDIS_URL=redis://localhost:6379/0
 
 Run Application
 ---------------
-
+Terminal 1 - Flask Application
 ```bash
-flask --app wsgi run
+flask --app wsgi:app run --debug
+```
+
+Terminal 2 - Celery Background Jobs
+```bash
+celery -A wsgi.celery worker --loglevel=info
 ```
 
 Application runs at:
@@ -214,13 +219,4 @@ black \
 ruff \
 gunicorn
 ```
-
-Notes
------
-
-- Flask-Script is deprecated and not used
-- Flask-RESTful is intentionally avoided
-- Routes are thin, business logic lives in services
-- API and Web layers are clearly separated
-- Redis is required for Celery and Flask-Limiter
 
