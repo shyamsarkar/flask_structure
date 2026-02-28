@@ -97,7 +97,7 @@ If you use **asdf**, install and set the version like this:
 ```bash
 asdf plugin add python
 asdf install python 3.12.12
-asdf local python 3.12.12
+asdf set python 3.12.12
 ```
 
 Verify
@@ -124,15 +124,8 @@ pip install -r requirements.txt
 Environment Variables
 ---------------------
 
-Create a `.env` file:
+Copy `.env.sample` and rename it to `.env`
 
-```env
-FLASK_ENV=development
-FLASK_DEBUG=1
-SECRET_KEY=your-secret-key
-DATABASE_URL=postgresql://user:password@localhost/dbname
-REDIS_URL=redis://localhost:6379/0
-```
 
 Run Application
 ---------------
