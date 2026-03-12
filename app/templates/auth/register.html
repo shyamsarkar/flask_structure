@@ -36,6 +36,15 @@
           </div>
 
           <div class="mb-3">
+            {{ form.referral_code.label(class="form-label") }}
+            {{ form.referral_code(class="form-control" + (" is-invalid" if form.referral_code.errors else "")) }}
+            {% for error in form.referral_code.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text">A valid referral code is required to sign up.</div>
+          </div>
+
+          <div class="mb-3">
             {{ form.password.label(class="form-label") }}
             {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
             {% for error in form.password.errors %}

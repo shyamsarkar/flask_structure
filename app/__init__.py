@@ -7,6 +7,7 @@ from app.extensions.limiter import limiter
 from app.extensions.login_manager import login_manager
 from app.extensions.mail import mail
 from app.extensions.migrate import migrate
+from app.extensions.cli import custom_cli
 
 
 def create_app():
@@ -21,6 +22,7 @@ def create_app():
     limiter.init_app(app)
     mail.init_app(app)
     init_celery(app)
+    app.cli.add_command(custom_cli)
 
     # Blueprints
     from app.web import web_bp

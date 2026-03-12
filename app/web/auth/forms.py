@@ -11,6 +11,7 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
+    referral_code = StringField("Referral Code", validators=[DataRequired()])
     password = PasswordField(
         "Password",
         validators=[

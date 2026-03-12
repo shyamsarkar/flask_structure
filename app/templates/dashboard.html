@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="p-4 bg-light border rounded">
+        <h1 class="h3 mb-2">MLM Dashboard</h1>
+        <p class="mb-0 text-muted">Overview of your network, earnings, and activity.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">My Network</div>
+          <div class="display-6">0</div>
+          <div class="small text-muted">Active downline members</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">Commissions</div>
+          <div class="display-6">$0.00</div>
+          <div class="small text-muted">This month</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">Rank</div>
+          <div class="display-6">Starter</div>
+          <div class="small text-muted">Next: Builder</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">Recent Activity</div>
+        <div class="card-body">
+          <p class="text-muted mb-0">No recent activity yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

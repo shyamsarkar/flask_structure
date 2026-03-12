@@ -37,16 +37,22 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = AuthService.register(
+        user, error = AuthService.register(
             email=form.email.data,
             password=form.password.data,
             first_name=form.first_name.data,
             last_name=form.last_name.data,
+            referral_code=form.referral_code.data,
         )
         if user:
             flash("Registration successful. Please log in.", "success")
             return redirect(url_for("web.auth.login"))
-        flash("Email already registered.", "danger")
+        if error == "email_exists":
+            flash("Email already registered.", "danger")
+        elif error == "invalid_referral":
+            flash("Invalid referral code.", "danger")
+        else:
+            flash("Registration failed.", "danger")
 
     return render_template("auth/register.html", form=form)
 

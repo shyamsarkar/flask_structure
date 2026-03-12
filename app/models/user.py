@@ -18,6 +18,9 @@ class User(UserMixin, BaseModel):
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
 
+    referral_code = db.Column(db.String(16), unique=True, nullable=False)
+    referred_by_id = db.Column(db.String(40), db.ForeignKey("users.id"), nullable=True)
+
     is_active = db.Column(db.Boolean, default=True)
     last_login_at = db.Column(db.DateTime, nullable=True)
 
@@ -29,6 +32,17 @@ class User(UserMixin, BaseModel):
         "Membership",
         back_populates="user",
         cascade="all, delete-orphan",
+        lazy="dynamic",
+    )
+
+    referred_by = db.relationship(
+        "User",
+        remote_side="User.id",
+        back_populates="referrals",
+    )
+    referrals = db.relationship(
+        "User",
+        back_populates="referred_by",
         lazy="dynamic",
     )
 
@@ -87,6 +101,19 @@ class User(UserMixin, BaseModel):
             .filter(Membership.user_id == self.id)
             .all()
         )
+
+    # --- subscriptions ---
+    def active_subscription(self):
+        from .subscription import Subscription
+
+        return (
+            Subscription.query.filter_by(user_id=self.id, active=True)
+            .order_by(Subscription.started_at.desc())
+            .first()
+        )
+
+    def has_active_subscription(self) -> bool:
+        return self.active_subscription() is not None
 
     @property
     def full_name(self) -> str:

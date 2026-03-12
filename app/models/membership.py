@@ -7,9 +7,9 @@ from .base import BaseModel
 
 class MembershipRole(enum.Enum):
     admin = 0
-    manager = 1
-    cashier = 2
-    waiter = 3
+    distributor = 1
+    sponsor = 2
+    customer = 3
 
 
 class Membership(BaseModel):
@@ -34,14 +34,14 @@ class Membership(BaseModel):
     def is_admin(self) -> bool:
         return self.role == MembershipRole.admin
 
-    def is_manager(self) -> bool:
-        return self.role == MembershipRole.manager
+    def is_distributor(self) -> bool:
+        return self.role == MembershipRole.distributor
 
-    def is_cashier(self) -> bool:
-        return self.role == MembershipRole.cashier
+    def is_sponsor(self) -> bool:
+        return self.role == MembershipRole.sponsor
 
-    def is_waiter(self) -> bool:
-        return self.role == MembershipRole.waiter
+    def is_customer(self) -> bool:
+        return self.role == MembershipRole.customer
 
     def __repr__(self):
         return f"<Membership user={self.user_id} tenant={self.tenant_id} role={self.role.name}>"

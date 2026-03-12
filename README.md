@@ -154,6 +154,14 @@ flask db migrate -m "initial migration"
 flask db upgrade
 ```
 
+Console Command
+-----------------
+
+```bash
+flask shell
+```
+before this, verify FLASK_APP=wsgi.py exists in .env
+
 Links
 -----
 
@@ -213,3 +221,21 @@ ruff \
 gunicorn
 ```
 
+Create Root User
+----------------
+
+After running migrations, create the first root user via the CLI:
+
+```bash
+flask custom create-root-user \
+  --email admin@example.com \
+  --password 'Password123' \
+  --first-name Admin \
+  --last-name User \
+  --tenant-name Main
+```
+
+This command:
+- Creates the user and a unique referral code like `MLM0001`
+- Creates the tenant if it doesn't exist
+- Assigns the user an `admin` membership in that tenant
