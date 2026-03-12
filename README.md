@@ -162,6 +162,36 @@ flask shell
 ```
 before this, verify FLASK_APP=wsgi.py exists in .env
 
+
+Mail (Development)
+------------------
+ 
+In development, emails are caught by [MailHog](https://github.com/mailhog/MailHog) — no real emails are sent.
+ 
+Start MailHog:
+ 
+```bash
+docker run --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
+```
+ 
+Add these to your `.env`:
+ 
+```
+MAIL_SERVER=localhost
+MAIL_PORT=1025
+MAIL_USE_TLS=False
+MAIL_USE_SSL=False
+MAIL_USERNAME=
+MAIL_PASSWORD=
+```
+ 
+View caught emails at:
+ 
+```
+http://localhost:8025
+```
+ 
+
 Links
 -----
 
