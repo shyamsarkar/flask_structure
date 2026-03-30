@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from app.extensions.celery import celery_app
 from app.extensions.db import db
-from app.models.commission import CommissionPayout, CommissionRule, CommissionSettings
+from app.models.commission import CommissionPayout, CommissionRule
 from app.models.subscription import Subscription
 
 
@@ -13,18 +13,21 @@ def distribute_commissions(subscription_id: str):
         return
 
     subscriber = subscription.user
-    settings = CommissionSettings.get_singleton()
-    rules = {
-        rule.level: rule
-        for rule in CommissionRule.query.filter_by(active=True).all()
-    }
+    rules = (
+        CommissionRule.query.filter_by(active=True)
+        .order_by(CommissionRule.level.asc())
+        .all()
+    )
+    if not rules:
+        return
 
     amount = Decimal(subscription.plan.price_inr)
     level = 1
+    max_levels = len(rules)
     current = subscriber.referred_by
 
-    while current and level <= settings.max_levels:
-        rule = rules.get(level)
+    while current and level <= max_levels:
+        rule = rules[level - 1]
         if rule and Decimal(rule.percentage) > 0:
             if current.has_active_subscription():
                 pct = Decimal(rule.percentage) / Decimal(100)

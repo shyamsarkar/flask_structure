@@ -1,4 +1,4 @@
-from .commission import CommissionPayout, CommissionRule, CommissionSettings
+from .commission import CommissionPayout, CommissionRule
 from .membership import Membership
 from .referral import ReferralCodeSequence
 from .subscription import Subscription, SubscriptionPlan
@@ -8,7 +8,6 @@ from .user import User
 __all__ = [
     "CommissionPayout",
     "CommissionRule",
-    "CommissionSettings",
     "Membership",
     "ReferralCodeSequence",
     "Subscription",

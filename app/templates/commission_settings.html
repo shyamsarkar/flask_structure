@@ -7,25 +7,28 @@
   </div>
 
   <form method="POST" class="card p-3">
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Max Levels</label>
-        <input type="number" name="max_levels" class="form-control" value="{{ settings.max_levels }}" min="1" />
-      </div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="text-muted">Add levels as needed. Order controls level numbering.</div>
+      <button type="button" class="btn btn-outline-primary btn-sm" id="add-level">
+        Add Level
+      </button>
     </div>
 
-    <div class="row g-3">
+    <div id="levels" class="row g-3">
       {% for rule in rules %}
         <div class="col-md-3">
-          <label class="form-label">Level {{ rule.level }} (%)</label>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            name="level_{{ rule.level }}_percentage"
-            class="form-control"
-            value="{{ rule.percentage }}"
-          />
+          <label class="form-label level-label">Level {{ rule.level }} (%)</label>
+          <div class="input-group">
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              name="percentages"
+              class="form-control"
+              value="{{ rule.percentage }}"
+            />
+            <button type="button" class="btn btn-outline-danger remove-level">Remove</button>
+          </div>
         </div>
       {% endfor %}
     </div>
@@ -34,4 +37,57 @@
       <button type="submit" class="btn btn-primary">Save Settings</button>
     </div>
   </form>
+
+  <template id="level-template">
+    <div class="col-md-3">
+      <label class="form-label level-label">Level</label>
+      <div class="input-group">
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          name="percentages"
+          class="form-control"
+          value=""
+        />
+        <button type="button" class="btn btn-outline-danger remove-level">Remove</button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const levelsContainer = document.getElementById("levels");
+    const addLevelBtn = document.getElementById("add-level");
+    const template = document.getElementById("level-template");
+
+    function renumberLevels() {
+      const labels = levelsContainer.querySelectorAll(".level-label");
+      labels.forEach((label, index) => {
+        label.textContent = `Level ${index + 1} (%)`;
+      });
+    }
+
+    function addLevel(value = "") {
+      const node = template.content.cloneNode(true);
+      const input = node.querySelector("input");
+      input.value = value;
+      levelsContainer.appendChild(node);
+      renumberLevels();
+    }
+
+    addLevelBtn.addEventListener("click", () => addLevel());
+
+    levelsContainer.addEventListener("click", (event) => {
+      if (!event.target.classList.contains("remove-level")) {
+        return;
+      }
+      const col = event.target.closest(".col-md-3");
+      if (col) {
+        col.remove();
+        renumberLevels();
+      }
+    });
+
+    renumberLevels();
+  </script>
 {% endblock %}

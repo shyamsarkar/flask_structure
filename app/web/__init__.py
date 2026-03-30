@@ -2,7 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.extensions.db import db
-from app.models.commission import CommissionRule, CommissionSettings
+from app.models.commission import CommissionRule
 from app.models.subscription import Subscription, SubscriptionPlan
 from app.tasks.commission import distribute_commissions
 
@@ -21,9 +21,18 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+@web_bp.route("/network")
+@login_required
+def network():
+    return render_template("network.html")
+
+
 @web_bp.route("/subscriptions")
 @login_required
 def subscriptions():
+    if current_user.is_admin:
+        flash("Administrators logically have an active subscription by default.", "info")
+        return redirect(url_for("web.dashboard"))
     plans = (
         SubscriptionPlan.query.filter_by(active=True)
         .order_by(SubscriptionPlan.price_inr.asc())
@@ -42,6 +51,8 @@ def subscriptions():
 @web_bp.route("/subscriptions/<plan_id>/subscribe", methods=["POST"])
 @login_required
 def subscribe(plan_id):
+    if current_user.is_admin:
+        return redirect(url_for("web.dashboard"))
     plan = SubscriptionPlan.query.get_or_404(plan_id)
 
     Subscription.query.filter_by(user_id=current_user.id, active=True).update(
@@ -59,57 +70,36 @@ def subscribe(plan_id):
 @web_bp.route("/admin/commissions", methods=["GET", "POST"])
 @login_required
 def commission_settings():
-    settings = CommissionSettings.get_singleton()
-
+    if not current_user.is_admin:
+        flash("Unauthorized access. Admin privileges required.", "danger")
+        return redirect(url_for("web.dashboard"))
     if request.method == "POST":
-        try:
-            max_levels = int(request.form.get("max_levels", settings.max_levels))
-        except ValueError:
-            max_levels = settings.max_levels
+        CommissionRule.query.delete()
 
-        settings.max_levels = max(1, max_levels)
-        db.session.add(settings)
-
-        for level in range(1, settings.max_levels + 1):
-            rule = CommissionRule.query.filter_by(level=level).first()
-            if not rule:
-                rule = CommissionRule(level=level, percentage=0)
-                db.session.add(rule)
-
-            pct_value = request.form.get(f"level_{level}_percentage", "").strip()
-            if pct_value:
-                try:
-                    rule.percentage = float(pct_value)
-                except ValueError:
-                    rule.percentage = 0
-            rule.active = True
-
-        CommissionRule.query.filter(CommissionRule.level > settings.max_levels).update(
-            {CommissionRule.active: False}
-        )
+        percentages = request.form.getlist("percentages")
+        level = 1
+        for pct_value in percentages:
+            pct_value = (pct_value or "").strip()
+            if not pct_value:
+                continue
+            try:
+                pct = float(pct_value)
+            except ValueError:
+                pct = 0
+            rule = CommissionRule(level=level, percentage=pct, active=True)
+            db.session.add(rule)
+            level += 1
 
         db.session.commit()
         flash("Commission settings updated.", "success")
         return redirect(url_for("web.commission_settings"))
 
     rules = (
-        CommissionRule.query.filter(CommissionRule.level <= settings.max_levels)
-        .order_by(CommissionRule.level.asc())
-        .all()
+        CommissionRule.query.order_by(CommissionRule.level.asc()).all()
     )
-    if not rules:
-        for level in range(1, settings.max_levels + 1):
-            db.session.add(CommissionRule(level=level, percentage=0, active=True))
-        db.session.commit()
-        rules = (
-            CommissionRule.query.filter(CommissionRule.level <= settings.max_levels)
-            .order_by(CommissionRule.level.asc())
-            .all()
-        )
 
     return render_template(
         "commission_settings.html",
-        settings=settings,
         rules=rules,
     )
 

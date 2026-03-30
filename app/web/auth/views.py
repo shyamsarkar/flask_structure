@@ -75,7 +75,7 @@ def forgot_password():
         user = AuthService.get_by_email(form.email.data)
         if user:
             token = user.generate_reset_token()
-            reset_url = url_for("auth.reset_password", token=token, _external=True)
+            reset_url = url_for("web.auth.reset_password", token=token, _external=True)
             send_reset_email(current_app._get_current_object(), user.email, reset_url)
 
         # always show this message — don't reveal if email exists

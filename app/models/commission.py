@@ -3,24 +3,6 @@ from app.extensions.db import db
 from .base import BaseModel
 
 
-class CommissionSettings(BaseModel):
-    __tablename__ = "commission_settings"
-
-    max_levels = db.Column(db.Integer, default=10, nullable=False)
-
-    @staticmethod
-    def get_singleton():
-        settings = CommissionSettings.query.first()
-        if not settings:
-            settings = CommissionSettings(max_levels=10)
-            db.session.add(settings)
-            db.session.commit()
-        return settings
-
-    def __repr__(self):
-        return f"<CommissionSettings max_levels={self.max_levels}>"
-
-
 class CommissionRule(BaseModel):
     __tablename__ = "commission_rules"
 

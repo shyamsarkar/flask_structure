@@ -112,7 +112,17 @@ class User(UserMixin, BaseModel):
             .first()
         )
 
+    @property
+    def is_admin(self) -> bool:
+        from .membership import MembershipRole
+        for membership in self.memberships:
+            if membership.role == MembershipRole.admin:
+                return True
+        return False
+
     def has_active_subscription(self) -> bool:
+        if self.is_admin:
+            return True
         return self.active_subscription() is not None
 
     @property
