@@ -269,3 +269,26 @@ This command:
 - Creates the user and a unique referral code like `MLM0001`
 - Creates the tenant if it doesn't exist
 - Assigns the user an `admin` membership in that tenant
+
+
+# Test Network Ecosystem
+
+Here are the mock users currently populated in the system for testing the network tree nesting and commissions.
+
+**Universal Test Password:** `Password123`
+
+| Name | Email | Generation | Sponsored By |
+| :--- | :--- | :--- | :--- |
+| **Admin Root** | `admin@example.com` | Root | - |
+| **Alice Test** | `alice@example.com` | Level 1 | Admin Root |
+| **Bob Test** | `bob@example.com` | Level 1 | Admin Root |
+| **Hank Test** | `hank@example.com` | Level 1 | Admin Root |
+| **Charlie Test** | `charlie@example.com` | Level 2 | Alice Test |
+| **Diana Test** | `diana@example.com` | Level 2 | Alice Test |
+| **Eve Test** | `eve@example.com` | Level 2 | Alice Test |
+| **Frank Test** | `frank@example.com` | Level 2 | Bob Test |
+| **Grace Test** | `grace@example.com` | Level 3 | Charlie Test |
+| **Ivy Test** | `ivy@example.com` | Level 3 | Charlie Test |
+
+> [!TIP]
+> Try logging in as **Alice Test** (`alice@example.com`) to see what a mid-level manager's view of the Tree looks like compared to the Admin's view!

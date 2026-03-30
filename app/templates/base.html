@@ -10,6 +10,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"/>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
@@ -37,12 +45,15 @@
         {% endif %}
       </ul>
       
-      <div class="d-flex flex-column flex-lg-row align-items-lg-center mt-2 mt-lg-0 border-top border-lg-0 pt-3 pt-lg-0" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-center mt-2 mt-lg-0 border-top border-lg-0 pt-3 pt-lg-0" style="border-color: var(--border-color-light) !important;">
+        <button id="themeToggle" class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center me-lg-4 mb-3 mb-lg-0 align-self-center align-self-lg-auto" style="width: 40px; height: 40px; padding: 0;" aria-label="Toggle Theme">
+          <i id="themeIcon" class="bi bi-moon-fill"></i>
+        </button>
         {% if current_user.is_authenticated %}
-          <span class="text-white-50 small mb-3 mb-lg-0 me-lg-4 px-2 px-lg-0 text-center text-lg-start">Logged in as <strong class="text-white">{{ current_user.full_name }}</strong></span>
+          <span class="text-muted small mb-3 mb-lg-0 me-lg-4 px-2 px-lg-0 text-center text-lg-start">Logged in as <strong style="color: var(--text-primary);">{{ current_user.full_name }}</strong></span>
           <a href="{{ url_for('web.auth.logout') }}" class="btn btn-primary px-4 py-2 fw-semibold text-white text-center">Logout</a>
         {% else %}
-          <a href="{{ url_for('web.auth.login') }}" class="nav-link custom-nav-link me-lg-3 text-center text-lg-start mb-2 mb-lg-0 text-white">Login</a>
+          <a href="{{ url_for('web.auth.login') }}" class="nav-link custom-nav-link me-lg-3 text-center text-lg-start mb-2 mb-lg-0" style="color: var(--text-primary);">Login</a>
           <a href="{{ url_for('web.auth.register') }}" class="btn btn-primary px-4 py-2 fw-semibold text-white w-100 w-lg-auto text-center">Register</a>
         {% endif %}
       </div>
@@ -63,5 +74,28 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+      const html = document.documentElement;
+      
+      if (html.getAttribute('data-theme') === 'light') {
+        themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+      }
+      
+      toggleBtn.addEventListener("click", () => {
+        if (html.getAttribute('data-theme') === 'light') {
+          html.removeAttribute('data-theme');
+          localStorage.setItem('theme', 'dark');
+          themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
+        } else {
+          html.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+          themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+        }
+      });
+    });
+  </script>
 </body>
 </html>

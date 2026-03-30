@@ -23,7 +23,7 @@
       {% macro render_node(user, level) %}
         {% set children = user.referrals.order_by(user.__class__.id.asc()).all() %}
         <div class="node-container mt-2">
-          <div class="d-flex align-items-center p-3 rounded glass-card-hover" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); margin-left: {{ level * 40 }}px; position: relative;">
+          <div class="d-flex align-items-center p-3 rounded glass-card-hover" style="background: var(--bg-hover); border: 1px solid var(--border-color); margin-left: {{ level * 40 }}px; position: relative;">
             {% if level > 0 %}
               <div class="tree-connector-h text-muted"></div>
             {% endif %}
@@ -33,10 +33,10 @@
             </div>
             
             <div class="flex-grow-1">
-              <h5 class="mb-1 text-white">
+              <h5 class="mb-1" style="color: var(--text-primary);">
                 {{ user.full_name }} 
                 {% if level == 0 %}
-                  <span class="badge text-white ms-2" style="background: var(--gradient-primary); font-weight: normal;">You (Root)</span>
+                  <span class="badge text-white ms-2" style="background: var(--gradient-primary); font-weight: normal; color: #fff !important;">You (Root)</span>
                 {% endif %}
               </h5>
               <div class="text-muted small d-flex flex-wrap gap-3 mt-1">
@@ -71,16 +71,16 @@
   z-index: 2;
 }
 .glass-card-hover:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: var(--bg-transparent) !important;
   border-color: rgba(0, 229, 255, 0.3) !important;
   transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+  box-shadow: var(--shadow-glow);
 }
 .tree-connector-v {
   position: absolute;
   top: 0;
   bottom: 30px;
-  border-left: 2px dashed rgba(255, 255, 255, 0.15);
+  border-left: 2px dashed var(--border-color);
   z-index: 1;
 }
 .tree-connector-h {
@@ -88,7 +88,7 @@
   left: -20px;
   top: 50%;
   width: 20px;
-  border-top: 2px dashed rgba(255, 255, 255, 0.15);
+  border-top: 2px dashed var(--border-color);
   z-index: 1;
 }
 </style>
