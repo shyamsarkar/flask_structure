@@ -1,8 +1,10 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from sqlalchemy import func
+
 from app.extensions.db import db
-from app.models.commission import CommissionRule
+from app.models.commission import CommissionRule, CommissionPayout
 from app.models.subscription import Subscription, SubscriptionPlan
 from app.tasks.commission import distribute_commissions
 
@@ -12,13 +14,19 @@ web_bp = Blueprint("web", __name__)
 @web_bp.route("/")
 @login_required
 def index():
-    return render_template("dashboard.html")
+    earned_commissions = db.session.query(func.sum(CommissionPayout.amount_inr)).filter(
+        CommissionPayout.to_user_id == current_user.id
+    ).scalar() or 0.0
+    return render_template("dashboard.html", earned_commissions=earned_commissions)
 
 
 @web_bp.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    earned_commissions = db.session.query(func.sum(CommissionPayout.amount_inr)).filter(
+        CommissionPayout.to_user_id == current_user.id
+    ).scalar() or 0.0
+    return render_template("dashboard.html", earned_commissions=earned_commissions)
 
 
 @web_bp.route("/network")

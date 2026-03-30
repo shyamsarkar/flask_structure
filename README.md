@@ -292,3 +292,7 @@ Here are the mock users currently populated in the system for testing the networ
 
 > [!TIP]
 > Try logging in as **Alice Test** (`alice@example.com`) to see what a mid-level manager's view of the Tree looks like compared to the Admin's view!
+
+
+Next task-
+1. add another page for commissions details
